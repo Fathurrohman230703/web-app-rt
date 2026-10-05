@@ -193,7 +193,7 @@ export default function Profil() {
                   </span>
 
                   <strong className="text-slate-800 text-base block mt-1">
-                    Bpk. Ahmad Suherman
+                    Bpk. Tata Taryana
                   </strong>
 
                   <span className="text-slate-400 text-xs">
@@ -210,7 +210,7 @@ export default function Profil() {
                   </span>
 
                   <strong className="text-slate-800 text-base block mt-1">
-                    Bpk. Dedi Kurniawan
+                    Ibu. Reni Rosliawati
                   </strong>
 
                   <span className="text-slate-400 text-xs">

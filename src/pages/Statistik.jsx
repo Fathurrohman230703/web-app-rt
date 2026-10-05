@@ -76,23 +76,23 @@ export default function Statistik() {
 
       // Statistik Card
       setStatsData({
-        totalKK: 48,
-        totalWarga: 156,
-        totalPria: 79,
-        totalWanita: 77,
-        totalProjek: 12,
+        totalKK: 46,
+        totalWarga: 408,
+        totalPria: 213,
+        totalWanita: 195,
+        totalProjek: 3,
       });
 
       // Grafik Gender
       setGenderChartData([
         {
           gender: 'Pria',
-          total: 79,
+          total: 213,
           fill: '#f97316',
         },
         {
           gender: 'Wanita',
-          total: 77,
+          total: 195,
           fill: '#06b6d4',
         },
       ]);

@@ -1,26 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   CalendarDays,
+  Clock3,
   Megaphone,
   Users,
   Home,
   MapPin,
   ArrowUpRight,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { supabase } from '../lib/supabaseClient';
-import { useNavigate } from 'react-router-dom';
+import { supabase } from "../lib/supabaseClient";
+import { Link, useNavigate } from "react-router-dom";
 
-import Navbar from '../components/Navbar';
-import WelcomeCard from '../components/dashboard/WelcomeCard';
+import Navbar from "../components/Navbar";
+import WelcomeCard from "../components/dashboard/WelcomeCard";
 
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardContent } from "@/components/ui/card";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
   const [profile, setProfile] = useState(null);
@@ -45,28 +43,25 @@ export default function Dashboard() {
 
       // Kalau belum login
       if (!user) {
-        navigate('/login');
+        navigate("/login");
         return;
       }
 
-      const {
-        data: userProfile,
-        error,
-      } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
+      const { data: userProfile, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
         .single();
 
       if (error) {
-        console.error('Gagal mengambil profile:', error);
+        console.error("Gagal mengambil profile:", error);
       }
 
       if (userProfile) {
         setProfile(userProfile);
       }
     } catch (err) {
-      console.error('Terjadi kesalahan:', err);
+      console.error("Terjadi kesalahan:", err);
     } finally {
       setLoading(false);
     }
@@ -77,7 +72,7 @@ export default function Dashboard() {
   // =========================
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate('/login');
+    navigate("/login");
   };
 
   // =========================
@@ -97,10 +92,7 @@ export default function Dashboard() {
       {/* =========================
           NAVBAR
       ========================= */}
-      <Navbar
-        profile={profile}
-        onLogout={handleLogout}
-      />
+      <Navbar profile={profile} onLogout={handleLogout} />
 
       {/* =========================
           CONTENT
@@ -112,15 +104,10 @@ export default function Dashboard() {
         ========================= */}
         <section>
           <WelcomeCard
-            nama={
-              profile?.full_name ||
-              profile?.nama ||
-              profile?.name
-            }
+            nama={profile?.full_name || profile?.nama || profile?.name}
             role={profile?.role}
           />
         </section>
-
 
         {/* =========================
             INFORMATION SECTION
@@ -132,12 +119,14 @@ export default function Dashboard() {
           ========================= */}
           <div className="lg:col-span-3">
 
-            <div className="flex items-center justify-between mb-5">
-
+            {/* HEADER */}
+            <div className="flex items-end justify-between mb-5">
               <div>
                 <div className="flex items-center gap-2">
 
-                  <Megaphone className="w-4 h-4 text-orange-500" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-50">
+                    <Megaphone className="w-4 h-4 text-orange-500" />
+                  </div>
 
                   <h2 className="text-lg font-semibold text-slate-900">
                     Pengumuman Terbaru
@@ -145,137 +134,224 @@ export default function Dashboard() {
 
                 </div>
 
-                <p className="text-sm text-slate-400 mt-1">
+                <p className="text-sm text-slate-400 mt-1 ml-10">
                   Informasi terbaru untuk warga
                 </p>
               </div>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+              <Link
+                to="/pengumuman"
+                className="flex items-center gap-1 px-3 py-2 rounded-md text-sm text-orange-600 hover:text-orange-700 hover:bg-orange-50 transition-colors"
               >
                 Lihat semua
-                <ArrowUpRight className="w-4 h-4 ml-1" />
-              </Button>
-
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
             </div>
-
 
             {/* LIST PENGUMUMAN */}
-            <div className="border-t border-slate-200">
+            <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
 
-              {/* ITEM 1 */}
-              <div className="group flex gap-4 py-5 border-b border-slate-200">
+              {/* =========================
+                  PENGUMUMAN 1
+              ========================= */}
+              <Link
+                to="/pengumuman/1"
+                className="group block p-5 border-b border-slate-200 hover:bg-slate-50/70 transition-colors"
+              >
+                <div className="flex gap-4">
 
-                <div className="flex-shrink-0 mt-1.5">
-                  <div className="w-2 h-2 rounded-full bg-orange-500" />
-                </div>
+                  {/* ICON */}
+                  <div className="flex-shrink-0">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50">
+                      <Megaphone className="w-4 h-4 text-orange-500" />
+                    </div>
+                  </div>
 
-                <div className="flex-1 min-w-0">
+                  {/* CONTENT */}
+                  <div className="flex-1 min-w-0">
 
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap">
 
-                    <h3 className="font-medium text-slate-800 group-hover:text-orange-600 transition-colors">
-                      Kerja Bakti Lingkungan
-                    </h3>
+                      <h3 className="font-semibold text-slate-800 group-hover:text-orange-600 transition-colors">
+                        Kerja Bakti Lingkungan
+                      </h3>
 
-                    <Badge className="bg-orange-500 hover:bg-orange-500 text-[10px]">
-                      PENTING
-                    </Badge>
+                      <Badge className="bg-orange-500 hover:bg-orange-500 text-[10px] px-2 py-0.5">
+                        PENTING
+                      </Badge>
+
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-1.5">
+
+                      <CalendarDays className="w-3.5 h-3.5 text-slate-400" />
+
+                      <span className="text-xs text-slate-400">
+                        12 Oktober 2026
+                      </span>
+
+                    </div>
+
+                    <p className="text-sm text-slate-500 leading-relaxed mt-3">
+                      Mari bersama menjaga kebersihan dan kenyamanan lingkungan
+                      RT 10 / RW 06.
+                    </p>
 
                   </div>
 
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    Mari bersama menjaga kebersihan dan kenyamanan
-                    lingkungan RT 10.
-                  </p>
+                  {/* ARROW */}
+                  <div className="flex-shrink-0 self-center">
 
-                  <p className="text-xs text-slate-400 mt-2">
-                    2 jam yang lalu
-                  </p>
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-orange-50 transition-colors">
 
-                </div>
+                      <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors" />
 
-                <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors mt-1 flex-shrink-0" />
-
-              </div>
-
-
-              {/* ITEM 2 */}
-              <div className="group flex gap-4 py-5 border-b border-slate-200">
-
-                <div className="flex-shrink-0 mt-1.5">
-                  <div className="w-2 h-2 rounded-full bg-slate-300" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-
-                    <h3 className="font-medium text-slate-800 group-hover:text-orange-600 transition-colors">
-                      Rapat Warga RT 10
-                    </h3>
-
-                    <Badge
-                      variant="outline"
-                      className="text-blue-600 border-blue-200 text-[10px]"
-                    >
-                      INFO
-                    </Badge>
+                    </div>
 
                   </div>
 
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    Pembahasan kegiatan dan kebutuhan lingkungan warga.
-                  </p>
-
-                  <p className="text-xs text-slate-400 mt-2">
-                    Kemarin
-                  </p>
-
                 </div>
+              </Link>
 
-                <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors mt-1 flex-shrink-0" />
+              {/* =========================
+                  PENGUMUMAN 2
+              ========================= */}
+              <Link
+                to="/pengumuman/2"
+                className="group block p-5 border-b border-slate-200 hover:bg-slate-50/70 transition-colors"
+              >
+                <div className="flex gap-4">
 
-              </div>
+                  {/* ICON */}
+                  <div className="flex-shrink-0">
 
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-50">
 
-              {/* ITEM 3 */}
-              <div className="group flex gap-4 py-5">
+                      <Megaphone className="w-4 h-4 text-slate-500" />
 
-                <div className="flex-shrink-0 mt-1.5">
-                  <div className="w-2 h-2 rounded-full bg-slate-300" />
-                </div>
-
-                <div className="flex-1 min-w-0">
-
-                  <div className="flex items-center gap-2 mb-1">
-
-                    <h3 className="font-medium text-slate-800 group-hover:text-orange-600 transition-colors">
-                      Informasi Kegiatan Warga
-                    </h3>
+                    </div>
 
                   </div>
 
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    Informasi mengenai kegiatan masyarakat RT 10.
-                  </p>
+                  {/* CONTENT */}
+                  <div className="flex-1 min-w-0">
 
-                  <p className="text-xs text-slate-400 mt-2">
-                    3 hari yang lalu
-                  </p>
+                    <div className="flex items-center gap-2 flex-wrap">
+
+                      <h3 className="font-semibold text-slate-800 group-hover:text-orange-600 transition-colors">
+                        Rapat Warga RT 10
+                      </h3>
+
+                      <Badge
+                        variant="outline"
+                        className="text-blue-600 border-blue-200 text-[10px] px-2 py-0.5"
+                      >
+                        INFO
+                      </Badge>
+
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-1.5">
+
+                      <CalendarDays className="w-3.5 h-3.5 text-slate-400" />
+
+                      <span className="text-xs text-slate-400">
+                        19 Oktober 2026
+                      </span>
+
+                    </div>
+
+                    <p className="text-sm text-slate-500 leading-relaxed mt-3">
+                      Pembahasan kegiatan dan kebutuhan lingkungan warga RT 10.
+                    </p>
+
+                  </div>
+
+                  {/* ARROW */}
+                  <div className="flex-shrink-0 self-center">
+
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-orange-50 transition-colors">
+
+                      <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors" />
+
+                    </div>
+
+                  </div>
 
                 </div>
+              </Link>
 
-                <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors mt-1 flex-shrink-0" />
+              {/* =========================
+                  PENGUMUMAN 3
+              ========================= */}
+              <Link
+                to="/pengumuman/3"
+                className="group block p-5 hover:bg-slate-50/70 transition-colors"
+              >
+                <div className="flex gap-4">
 
-              </div>
+                  {/* ICON */}
+                  <div className="flex-shrink-0">
+
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-50">
+
+                      <Megaphone className="w-4 h-4 text-slate-500" />
+
+                    </div>
+
+                  </div>
+
+                  {/* CONTENT */}
+                  <div className="flex-1 min-w-0">
+
+                    <div className="flex items-center gap-2 flex-wrap">
+
+                      <h3 className="font-semibold text-slate-800 group-hover:text-orange-600 transition-colors">
+                        Informasi Kegiatan Warga
+                      </h3>
+
+                      <Badge
+                        variant="outline"
+                        className="text-emerald-600 border-emerald-200 text-[10px] px-2 py-0.5"
+                      >
+                        KEGIATAN
+                      </Badge>
+
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-1.5">
+
+                      <CalendarDays className="w-3.5 h-3.5 text-slate-400" />
+
+                      <span className="text-xs text-slate-400">
+                        25 Oktober 2026
+                      </span>
+
+                    </div>
+
+                    <p className="text-sm text-slate-500 leading-relaxed mt-3">
+                      Informasi mengenai kegiatan masyarakat dan kebersamaan
+                      warga RT 10.
+                    </p>
+
+                  </div>
+
+                  {/* ARROW */}
+                  <div className="flex-shrink-0 self-center">
+
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full group-hover:bg-orange-50 transition-colors">
+
+                      <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors" />
+
+                    </div>
+
+                  </div>
+
+                </div>
+              </Link>
 
             </div>
-
           </div>
-
 
           {/* =========================
               AGENDA
@@ -285,6 +361,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-5">
 
               <div>
+
                 <div className="flex items-center gap-2">
 
                   <CalendarDays className="w-4 h-4 text-orange-500" />
@@ -298,25 +375,31 @@ export default function Dashboard() {
                 <p className="text-sm text-slate-400 mt-1">
                   Kegiatan mendatang
                 </p>
+
               </div>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+              <Link
+                to="/agenda"
+                className="flex items-center gap-1 px-3 py-2 rounded-md text-sm text-orange-600 hover:text-orange-700 hover:bg-orange-50 transition-colors"
               >
                 Semua
-              </Button>
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
 
             </div>
 
-
-            {/* AGENDA */}
+            {/* AGENDA CARD */}
             <Card className="border-slate-200 shadow-none bg-white">
+
               <CardContent className="p-0">
 
-                {/* AGENDA 1 */}
-                <div className="flex items-center gap-4 p-4 border-b border-slate-200">
+                {/* =========================
+                    AGENDA 1
+                ========================= */}
+                <Link
+                  to="/agenda/1"
+                  className="group flex items-center gap-4 p-4 border-b border-slate-200 hover:bg-slate-50/70 transition-colors"
+                >
 
                   <div className="flex-shrink-0 w-12 text-center">
 
@@ -332,23 +415,35 @@ export default function Dashboard() {
 
                   <div className="h-10 w-px bg-slate-200" />
 
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
 
-                    <h3 className="font-medium text-slate-800">
+                    <h3 className="font-medium text-slate-800 group-hover:text-orange-600 transition-colors">
                       Kerja Bakti
                     </h3>
 
-                    <p className="text-xs text-slate-400 mt-1">
-                      Minggu · 07.00 WIB
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+
+                      <Clock3 className="w-3.5 h-3.5 text-slate-400" />
+
+                      <p className="text-xs text-slate-400">
+                        07.00 WIB
+                      </p>
+
+                    </div>
 
                   </div>
 
-                </div>
+                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors" />
 
+                </Link>
 
-                {/* AGENDA 2 */}
-                <div className="flex items-center gap-4 p-4 border-b border-slate-200">
+                {/* =========================
+                    AGENDA 2
+                ========================= */}
+                <Link
+                  to="/agenda/2"
+                  className="group flex items-center gap-4 p-4 border-b border-slate-200 hover:bg-slate-50/70 transition-colors"
+                >
 
                   <div className="flex-shrink-0 w-12 text-center">
 
@@ -364,23 +459,35 @@ export default function Dashboard() {
 
                   <div className="h-10 w-px bg-slate-200" />
 
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
 
-                    <h3 className="font-medium text-slate-800">
+                    <h3 className="font-medium text-slate-800 group-hover:text-orange-600 transition-colors">
                       Rapat Warga
                     </h3>
 
-                    <p className="text-xs text-slate-400 mt-1">
-                      Minggu · 19.30 WIB
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+
+                      <Clock3 className="w-3.5 h-3.5 text-slate-400" />
+
+                      <p className="text-xs text-slate-400">
+                        19.30 WIB
+                      </p>
+
+                    </div>
 
                   </div>
 
-                </div>
+                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors" />
 
+                </Link>
 
-                {/* AGENDA 3 */}
-                <div className="flex items-center gap-4 p-4">
+                {/* =========================
+                    AGENDA 3
+                ========================= */}
+                <Link
+                  to="/agenda/3"
+                  className="group flex items-center gap-4 p-4 hover:bg-slate-50/70 transition-colors"
+                >
 
                   <div className="flex-shrink-0 w-12 text-center">
 
@@ -396,27 +503,33 @@ export default function Dashboard() {
 
                   <div className="h-10 w-px bg-slate-200" />
 
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
 
-                    <h3 className="font-medium text-slate-800">
+                    <h3 className="font-medium text-slate-800 group-hover:text-orange-600 transition-colors">
                       Kegiatan Warga
                     </h3>
 
-                    <p className="text-xs text-slate-400 mt-1">
-                      Sabtu · 08.00 WIB
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+
+                      <Clock3 className="w-3.5 h-3.5 text-slate-400" />
+
+                      <p className="text-xs text-slate-400">
+                        16.00 WIB
+                      </p>
+
+                    </div>
 
                   </div>
 
-                </div>
+                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors" />
+
+                </Link>
 
               </CardContent>
+
             </Card>
-
           </div>
-
         </section>
-
 
         {/* =========================
             OVERVIEW
@@ -435,7 +548,6 @@ export default function Dashboard() {
 
           </div>
 
-
           <div className="grid grid-cols-1 sm:grid-cols-3 border border-slate-200 bg-white">
 
             {/* WARGA */}
@@ -452,7 +564,7 @@ export default function Dashboard() {
               </div>
 
               <p className="text-3xl font-semibold text-slate-900 mt-5">
-                156
+                408
               </p>
 
               <p className="text-sm text-slate-500 mt-1">
@@ -460,7 +572,6 @@ export default function Dashboard() {
               </p>
 
             </div>
-
 
             {/* KK */}
             <div className="p-6 border-b sm:border-b-0 sm:border-r border-slate-200">
@@ -476,7 +587,7 @@ export default function Dashboard() {
               </div>
 
               <p className="text-3xl font-semibold text-slate-900 mt-5">
-                48
+                46
               </p>
 
               <p className="text-sm text-slate-500 mt-1">
@@ -484,7 +595,6 @@ export default function Dashboard() {
               </p>
 
             </div>
-
 
             {/* WILAYAH */}
             <div className="p-6">
@@ -510,9 +620,7 @@ export default function Dashboard() {
             </div>
 
           </div>
-
         </section>
-
 
         {/* =========================
             FOOTER QUOTE
@@ -524,8 +632,7 @@ export default function Dashboard() {
           </p>
 
           <p className="mt-3 text-lg sm:text-xl font-medium tracking-tight text-slate-700">
-            “Ngamumule Gotong Royong,
-            Ngawangun Warga anu Sauyunan”
+            “Ngamumule Gotong Royong, Ngawangun Warga anu Sauyunan”
           </p>
 
           <p className="mt-2 text-sm text-slate-400">
@@ -535,7 +642,6 @@ export default function Dashboard() {
         </section>
 
       </main>
-
     </div>
   );
 }

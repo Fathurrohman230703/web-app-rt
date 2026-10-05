@@ -2,20 +2,23 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Link, useLocation } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 
 export default function Navbar({ profile, onLogout }) {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
 
-  // Cek menu yang sedang aktif
   const isActive = (path) => location.pathname === path;
 
-  // Ambil huruf pertama nama
+  const isInfoActive =
+    location.pathname.startsWith("/pengumuman") ||
+    location.pathname.startsWith("/agenda");
+
   const getInitial = (name) => {
     return name ? name.charAt(0).toUpperCase() : "W";
   };
 
-  // Style menu navbar
   const navClass = (path) => `
     px-3 py-2 rounded-md text-sm font-medium transition-colors
     ${
@@ -28,17 +31,13 @@ export default function Navbar({ profile, onLogout }) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-orange-100 bg-white/95 backdrop-blur-md">
 
-      {/* =========================
-          NAVBAR
-      ========================= */}
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
 
         {/* =========================
-            BRAND + MENU
+            LOGO
         ========================= */}
         <div className="flex items-center gap-8">
 
-          {/* BRAND */}
           <Link
             to="/dashboard"
             className="flex items-center gap-2.5"
@@ -54,13 +53,11 @@ export default function Navbar({ profile, onLogout }) {
             </span>
           </Link>
 
-
           {/* =========================
-              MENU DESKTOP
+              DESKTOP NAVBAR
           ========================= */}
           <nav className="hidden md:flex items-center gap-1">
 
-            {/* BERANDA */}
             <Link
               to="/dashboard"
               className={navClass("/dashboard")}
@@ -68,7 +65,6 @@ export default function Navbar({ profile, onLogout }) {
               Beranda
             </Link>
 
-            {/* PROFIL */}
             <Link
               to="/profil"
               className={navClass("/profil")}
@@ -76,7 +72,6 @@ export default function Navbar({ profile, onLogout }) {
               Profil
             </Link>
 
-            {/* STATISTIK */}
             <Link
               to="/statistik"
               className={navClass("/statistik")}
@@ -84,17 +79,90 @@ export default function Navbar({ profile, onLogout }) {
               Statistik
             </Link>
 
-          </nav>
+            {/* =========================
+                INFORMASI DROPDOWN
+            ========================= */}
+            <div
+              className="relative"
+              onMouseEnter={() => setInfoOpen(true)}
+              onMouseLeave={() => setInfoOpen(false)}
+            >
 
+              <button
+                type="button"
+                className={`
+                  flex items-center gap-1
+                  px-3 py-2 rounded-md
+                  text-sm font-medium
+                  transition-colors
+                  ${
+                    isInfoActive
+                      ? "bg-orange-50 text-orange-600 font-semibold"
+                      : "text-slate-600 hover:text-orange-600 hover:bg-orange-50/50"
+                  }
+                `}
+              >
+                Informasi
+
+                <ChevronDown
+                  className={`
+                    h-3.5 w-3.5 transition-transform
+                    ${infoOpen ? "rotate-180" : ""}
+                  `}
+                />
+              </button>
+
+              {/* DROPDOWN */}
+              {infoOpen && (
+                <div className="absolute left-0 top-full pt-2">
+
+                  <div className="w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
+
+                    <Link
+                      to="/pengumuman"
+                      className={`
+                        block rounded-lg px-3 py-2.5 text-sm
+                        transition-colors
+                        ${
+                          location.pathname.startsWith("/pengumuman")
+                            ? "bg-orange-50 text-orange-600 font-medium"
+                            : "text-slate-600 hover:bg-orange-50 hover:text-orange-600"
+                        }
+                      `}
+                    >
+                      Pengumuman
+                    </Link>
+
+                    <Link
+                      to="/agenda"
+                      className={`
+                        block rounded-lg px-3 py-2.5 text-sm
+                        transition-colors
+                        ${
+                          location.pathname.startsWith("/agenda")
+                            ? "bg-orange-50 text-orange-600 font-medium"
+                            : "text-slate-600 hover:bg-orange-50 hover:text-orange-600"
+                        }
+                      `}
+                    >
+                      Agenda
+                    </Link>
+
+                  </div>
+
+                </div>
+              )}
+
+            </div>
+
+          </nav>
         </div>
 
-
         {/* =========================
-            USER + LOGOUT + MOBILE
+            RIGHT SIDE
         ========================= */}
         <div className="flex items-center gap-2 sm:gap-4">
 
-          {/* USER */}
           <div className="flex items-center gap-2">
 
             <Avatar className="h-7 w-7 sm:h-8 sm:w-8 bg-orange-500 font-semibold text-white">
@@ -111,8 +179,6 @@ export default function Navbar({ profile, onLogout }) {
 
           </div>
 
-
-          {/* LOGOUT */}
           <Button
             variant="outline"
             size="sm"
@@ -122,8 +188,7 @@ export default function Navbar({ profile, onLogout }) {
             Logout
           </Button>
 
-
-          {/* HAMBURGER MOBILE */}
+          {/* MOBILE MENU BUTTON */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="inline-flex md:hidden items-center justify-center p-1.5 rounded-md text-slate-600 hover:text-orange-600 hover:bg-orange-50 focus:outline-none"
@@ -157,14 +222,12 @@ export default function Navbar({ profile, onLogout }) {
 
       </div>
 
-
       {/* =========================
           MOBILE MENU
       ========================= */}
       {isOpen && (
         <div className="md:hidden border-t border-orange-100 bg-white px-4 pt-2 pb-3 space-y-1">
 
-          {/* BERANDA */}
           <Link
             to="/dashboard"
             onClick={() => setIsOpen(false)}
@@ -173,7 +236,6 @@ export default function Navbar({ profile, onLogout }) {
             Beranda
           </Link>
 
-          {/* PROFIL */}
           <Link
             to="/profil"
             onClick={() => setIsOpen(false)}
@@ -182,7 +244,6 @@ export default function Navbar({ profile, onLogout }) {
             Profil
           </Link>
 
-          {/* STATISTIK */}
           <Link
             to="/statistik"
             onClick={() => setIsOpen(false)}
@@ -190,6 +251,80 @@ export default function Navbar({ profile, onLogout }) {
           >
             Statistik
           </Link>
+
+          {/* =========================
+              MOBILE INFORMASI
+          ========================= */}
+          <div>
+
+            <button
+              type="button"
+              onClick={() => setInfoOpen(!infoOpen)}
+              className={`
+                w-full flex items-center justify-between
+                px-3 py-2 rounded-md
+                text-base font-medium
+                transition-colors
+                ${
+                  isInfoActive
+                    ? "bg-orange-50 text-orange-600 font-semibold"
+                    : "text-slate-600 hover:text-orange-600 hover:bg-orange-50/50"
+                }
+              `}
+            >
+              <span>Informasi</span>
+
+              <ChevronDown
+                className={`
+                  h-4 w-4 transition-transform
+                  ${infoOpen ? "rotate-180" : ""}
+                `}
+              />
+            </button>
+
+            {infoOpen && (
+              <div className="ml-3 mt-1 space-y-1 border-l border-orange-100 pl-2">
+
+                <Link
+                  to="/pengumuman"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setInfoOpen(false);
+                  }}
+                  className={`
+                    block px-3 py-2 rounded-md text-sm
+                    ${
+                      location.pathname.startsWith("/pengumuman")
+                        ? "bg-orange-50 text-orange-600 font-medium"
+                        : "text-slate-500 hover:bg-orange-50 hover:text-orange-600"
+                    }
+                  `}
+                >
+                  Pengumuman
+                </Link>
+
+                <Link
+                  to="/agenda"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setInfoOpen(false);
+                  }}
+                  className={`
+                    block px-3 py-2 rounded-md text-sm
+                    ${
+                      location.pathname.startsWith("/agenda")
+                        ? "bg-orange-50 text-orange-600 font-medium"
+                        : "text-slate-500 hover:bg-orange-50 hover:text-orange-600"
+                    }
+                  `}
+                >
+                  Agenda
+                </Link>
+
+              </div>
+            )}
+
+          </div>
 
         </div>
       )}
